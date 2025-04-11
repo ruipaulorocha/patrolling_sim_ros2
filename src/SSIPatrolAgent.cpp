@@ -451,6 +451,7 @@ void SSIPatrolAgent::wait(){
 
 int SSIPatrolAgent::compute_next_vertex() {
 	compute_next_vertex(current_vertex);
+    return 0;
 }
 
 // current_vertex (goal just reached)
