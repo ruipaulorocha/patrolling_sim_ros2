@@ -150,7 +150,8 @@ def run_experiment(MAP, NROBOTS, INITPOS, ALG_SHORT, LOC_MODE, NAV_MODULE, GWAIT
     print(cmd_stage)
 
     if (TERM == 'xterm'):
-        os.system('xterm -e  "'+cmd_monitor+'" &') 
+        os.system('xterm -e  "'+cmd_monitor+'" &')
+        os.system('sleep 1')
         os.system('xterm -e  "'+cmd_stage+'" &')
     else: 
         os.system('gnome-terminal --tab -e  "bash -c \''+cmd_monitor+'\'" --tab -e "bash -c \''+cmd_stage+'\'" &')
@@ -160,26 +161,26 @@ def run_experiment(MAP, NROBOTS, INITPOS, ALG_SHORT, LOC_MODE, NAV_MODULE, GWAIT
     cmd_poses = 'ros2 param set /monitor initial_positions "\''+iposes+'\'"'
     print(cmd_poses)
     os.system(cmd_poses)
-    os.system('sleep 3')
+    # os.system('sleep 5')
 
-    # Start robots
-    if (LOC_MODE == 'AMCL'):
-        robot_launch = 'robot.launch.py'
-    else:
-        robot_launch = 'robot_fake_loc.launch'
+    # # Start robots
+    # if (LOC_MODE == 'AMCL'):
+    #     robot_launch = 'robot.launch.py'
+    # else:
+    #     robot_launch = 'robot_fake_loc.launch'
     
-    if (TERM == 'xterm'):
-        xcmd = 'xterm -e  "'
-    else:
-        xcmd = 'gnome-terminal '
-        xcmd = xcmd + ' --tab -e "'
+    # if (TERM == 'xterm'):
+    #     xcmd = 'xterm -e  "'
+    # else:
+    #     xcmd = 'gnome-terminal '
+    #     xcmd = xcmd + ' --tab -e "'
 
-    cmd = 'bash -c \'ros2 launch patrolling_sim_ros2 multi_stop_simulation_launch.py map:='+MAP+' n_robots:='+str(NROBOTS)+' use_rviz:='+str(USE_RVIZ)
-    cmd = cmd + "'"
-    xcmd = xcmd + cmd + '" '
-    print(xcmd)
-    os.system(xcmd)
-    os.system('sleep 5')
+    # cmd = 'bash -c \'ros2 launch patrolling_sim_ros2 multi_stop_simulation_launch.py map:='+MAP+' n_robots:='+str(NROBOTS)+' use_rviz:='+str(USE_RVIZ)
+    # cmd = cmd + "'"
+    # xcmd = xcmd + cmd + '" '
+    # print(xcmd)
+    # os.system(xcmd)
+    # os.system('sleep 10')
 
     # # Start patrol behaviors
     # gcmd = 'gnome-terminal '
