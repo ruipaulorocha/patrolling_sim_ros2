@@ -41,15 +41,6 @@ def generate_launch_description():
             'Y': LaunchConfiguration('yaw', default='0.00')}
     robot_name = LaunchConfiguration('robot_name')
 
-    # Map fully qualified names to relative ones so the node's namespace can be prepended.
-    # In case of the transforms (tf), currently, there doesn't seem to be a better alternative
-    # https://github.com/ros/geometry2/issues/32
-    # https://github.com/ros/robot_state_publisher/pull/30
-    # TODO(orduno) Substitute with `PushNodeRemapping`
-    #              https://github.com/ros2/launch_ros/issues/56
-    remappings = [('/tf', '/tf'),
-                  ('/tf_static', '/tf_static')]
-
     # Declare the launch arguments
     declare_x_pose_cmd = DeclareLaunchArgument('x_pose')
 
@@ -125,6 +116,7 @@ def generate_launch_description():
                           'params_file': params_file,
                           'x_pose': pose['x'],
                           'y_pose': pose['y'],
+                          'yaw_pose': pose['Y'],
                           'autostart': autostart}.items())
 
     # Create the launch description and populate

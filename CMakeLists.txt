@@ -25,6 +25,7 @@ find_package(ament_index_cpp REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(stage_ros2 REQUIRED)
+find_package(p3dx_description_ros REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 
@@ -184,6 +185,10 @@ ament_target_dependencies(GoToStartPos
 # the following line is required to use in this node the new interface defined in the same package
 target_link_libraries(GoToStartPos "${cpp_typesupport_target}")
 
+## Declare a cpp executable 
+add_executable(twist_stamped_to_twist src/twist_stamped_to_twist.cpp)
+ament_target_dependencies(twist_stamped_to_twist rclcpp geometry_msgs)
+
 
 
 #############
@@ -208,7 +213,7 @@ ament_export_dependencies(std_srvs)
 install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
 install(TARGETS monitor Conscientious_Reactive Heuristic_Conscientious_Reactive
   Conscientious_Cognitive Cyclic MSP GBS SEBS CBLS Random DTAGreedy
-  DTASSI DTASSIPart GoToStartPos DESTINATION lib/${PROJECT_NAME})
+  DTASSI DTASSIPart GoToStartPos twist_stamped_to_twist DESTINATION lib/${PROJECT_NAME})
 install(DIRECTORY params DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY maps DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY rviz DESTINATION share/${PROJECT_NAME})

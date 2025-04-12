@@ -144,7 +144,8 @@ def run_experiment(MAP, NROBOTS, INITPOS, ALG_SHORT, LOC_MODE, NAV_MODULE, GWAIT
     os.system('sleep 3')
 
     cmd_monitor = 'ros2 run patrolling_sim_ros2 monitor '+MAP+' '+ALG_SHORT+' '+NROBOTS + ' --ros-args -p goal_reached_wait:='+str(float(GWAIT))+' -p communication_delay:='+str(COMMDELAY)+' -p navigation_module:='+NAV_MODULE+' -p initial_positions:='+INITPOS
-    cmd_stage = 'ros2 run stage_ros2 stageros ' + dirname + '/maps/'+MAP+'/'+MAP+'.world '
+    #cmd_stage = 'ros2 run stage_ros2 stageros ' + dirname + '/maps/'+MAP+'/'+MAP+'.world '
+    cmd_stage = 'ros2 launch patrolling_sim_ros2 stage.launch.py world:=' + dirname + '/maps/'+MAP+'/'+MAP+'.world '
     print(cmd_monitor)
     print(cmd_stage)
 
@@ -161,24 +162,24 @@ def run_experiment(MAP, NROBOTS, INITPOS, ALG_SHORT, LOC_MODE, NAV_MODULE, GWAIT
     os.system(cmd_poses)
     os.system('sleep 3')
 
-    # # Start robots
-    # if (LOC_MODE == 'AMCL'):
-    #     robot_launch = 'robot.launch.py'
-    # else:
-    #     robot_launch = 'robot_fake_loc.launch'
+    # Start robots
+    if (LOC_MODE == 'AMCL'):
+        robot_launch = 'robot.launch.py'
+    else:
+        robot_launch = 'robot_fake_loc.launch'
     
-    # if (TERM == 'xterm'):
-    #     xcmd = 'xterm -e  "'
-    # else:
-    #     xcmd = 'gnome-terminal '
-    #     xcmd = xcmd + ' --tab -e "'
+    if (TERM == 'xterm'):
+        xcmd = 'xterm -e  "'
+    else:
+        xcmd = 'gnome-terminal '
+        xcmd = xcmd + ' --tab -e "'
 
-    # cmd = 'bash -c \'ros2 launch patrolling_sim_ros2 multi_stop_simulation_launch.py map:='+MAP+' n_robots:='+str(NROBOTS)+' use_rviz:='+str(USE_RVIZ)
-    # cmd = cmd + "'"
-    # xcmd = xcmd + cmd + '" '
-    # print(xcmd)
-    # os.system(xcmd)
-    # os.system('sleep 5')
+    cmd = 'bash -c \'ros2 launch patrolling_sim_ros2 multi_stop_simulation_launch.py map:='+MAP+' n_robots:='+str(NROBOTS)+' use_rviz:='+str(USE_RVIZ)
+    cmd = cmd + "'"
+    xcmd = xcmd + cmd + '" '
+    print(xcmd)
+    os.system(xcmd)
+    os.system('sleep 5')
 
     # # Start patrol behaviors
     # gcmd = 'gnome-terminal '

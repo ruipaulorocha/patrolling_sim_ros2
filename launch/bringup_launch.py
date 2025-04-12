@@ -39,7 +39,8 @@ def generate_launch_description():
     params_file = LaunchConfiguration('params_file')
     autostart = LaunchConfiguration('autostart')
     pose = {'x': LaunchConfiguration('x_pose'),
-            'y': LaunchConfiguration('y_pose')}
+            'y': LaunchConfiguration('y_pose'),
+            'yaw': LaunchConfiguration('yaw_pose')}
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
         'RCUTILS_LOGGING_BUFFERED_STREAM', '1')
@@ -103,18 +104,22 @@ def generate_launch_description():
                               'params_file': params_file,
                               'x_pose': pose['x'],
                               'y_pose': pose['y'],
+                              'yaw_pose': pose['yaw'],
                               #'use_lifecycle_mgr': 'false'
                               }.items()),
 
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(os.path.join(
-                launch_dir, 'navigation_launch.py')),
-            launch_arguments={'namespace': namespace,
-                              'use_sim_time': use_sim_time,
-                              'autostart': autostart,
-                              'params_file': params_file,
-                              'use_lifecycle_mgr': 'false',
-                              'map_subscribe_transient_local': 'true'}.items()),
+            PythonLaunchDescriptionSource(
+                os.path.join(launch_dir, 'navigation_launch.py')
+            ),
+            launch_arguments=[
+                ('namespace',  namespace),
+                ('use_sim_time',        'True'),
+                ('use_localization',    'False'),
+                ('params_file',         params_file),
+                ('use_composition',     'False')
+            ]
+        )
     ])
 
     # Create the launch description and populate

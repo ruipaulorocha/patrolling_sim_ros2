@@ -11,6 +11,17 @@ _D. Portugal & R. P. Rocha (2016). Cooperative Multi-Robot Patrol with Bayesian 
 
 Besides porting the code base to ROS Jazzy distro, this version of the package extends previous versions of `patrolling_sim` with an improved structure of the code that allows easy integration of new algorithms, an improved navigation configuration that allows the robots to move at 1 m/s and to avoid most of conflicting situations, and a better management of the experiments and generation of the results.
 
+## Dependencies
+
+Add to your ROS workspace the packages below which need to be compiled from source. Follow the instructions available on each GitHub repository about these packages' dependencies.
+
+- [`stage_ros2`](https://github.com/ruipaulorocha/stage_ros2)
+- [p3dx\_ description\_ ros](https://github.com/ruipaulorocha/p3dx_description_ros.git)
+
+Afterwards, install the other required dependencies with the following command, which assumes that you're in your ROS workspace's root directory:
+```bash
+rosdep install -i --from-path src --rosdistro $ROS_DISTRO --ignore-src -y
+```
 
 ## Usage
 

@@ -20,7 +20,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, SetEnvironmentVariable
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from nav2_common.launch import RewrittenYaml
+from nav2_common.launch import ReplaceString, RewrittenYaml
 
 
 def generate_launch_description():
@@ -32,29 +32,31 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
     autostart = LaunchConfiguration('autostart')
     params_file = LaunchConfiguration('params_file')
-    lifecycle_nodes = ['map_server', 'amcl']
+    #lifecycle_nodes = ['map_server', 'amcl']
+    lifecycle_nodes = ['amcl']
     pose = {'x': LaunchConfiguration('x_pose'),
-            'y': LaunchConfiguration('y_pose')}
+            'y': LaunchConfiguration('y_pose'),
+            'yaw': LaunchConfiguration('yaw_pose')}
 
-    # Map fully qualified names to relative ones so the node's namespace can be prepended.
-    # In case of the transforms (tf), currently, there doesn't seem to be a better alternative
-    # https://github.com/ros/geometry2/issues/32
-    # https://github.com/ros/robot_state_publisher/pull/30
-    # TODO(orduno) Substitute with `PushNodeRemapping`
-    #              https://github.com/ros2/launch_ros/issues/56
-    remappings = [('/tf', 'tf'),
-                  ('/tf_static', 'tf_static')]
+    remappings = [('map', '/map')]
 
     # Create our own temporary YAML files that include substitutions
-    param_substitutions = {
-        'use_sim_time': use_sim_time,
-        'yaml_filename': map_yaml_file,
-        'amcl.ros__parameters.initial_pose.x': pose['x'],
-        'amcl.ros__parameters.initial_pose.y': pose['y']}
+    # param_substitutions = {
+    #     'use_sim_time': use_sim_time,
+    #     #'yaml_filename': map_yaml_file,
+    #     'amcl.ros__parameters.initial_pose.x': pose['x'],
+    #     'amcl.ros__parameters.initial_pose.y': pose['y'],
+    #     'amcl.ros__parameters.initial_pose.y': pose['yaw']}
+    param_substitutions = {}
+
+    params_file = ReplaceString(
+        source_file=params_file,
+        replacements={'<robot_namespace>': namespace},
+    )
 
     configured_params = RewrittenYaml(
         source_file=params_file,
-        root_key=namespace,
+        #root_key=namespace,
         param_rewrites=param_substitutions,
         convert_types=True)
 
@@ -86,20 +88,30 @@ def generate_launch_description():
                 bringup_dir, 'params', 'nav2_params.yaml'),
             description='Full path to the ROS2 parameters file to use'),
 
-        Node(
-            package='nav2_map_server',
-            executable='map_server',
-            name='map_server',
-            output='screen',
-            parameters=[configured_params],
-            remappings=remappings),
+        # Node(
+        #     package='nav2_map_server',
+        #     executable='map_server',
+        #     name='map_server',
+        #     output='screen',
+        #     parameters=[configured_params],
+        #     remappings=remappings),
 
         Node(
             package='nav2_amcl',
             executable='amcl',
             name='amcl',
             output='screen',
-            parameters=[configured_params],
+            parameters=[
+                configured_params,
+                {
+                    'initial_pose': {
+                        'x':    pose['x'],
+                        'y':    pose['y'],
+                        'z':    0.0,
+                        'yaw':  pose['yaw']
+                     }
+                }
+            ],
             remappings=remappings),
 
         Node(
