@@ -48,13 +48,10 @@ def generate_launch_description():
         p3dx_description_directory = get_package_share_directory('p3dx_description_ros')
         remappings = []
 
-        if n == 1:
-            remappings.append(('cmd_vel', topic_name))
-        else:
-            for i in range(n):
-                remappings.append(
-                    (f'/robot_{i}/cmd_vel', f'/robot_{i}/{topic_name}' )
-                )
+        for i in range(n):
+            remappings.append(
+                (f'/robot_{i}/cmd_vel', f'/robot_{i}/{topic_name}' )
+            )
 
         nodes = []
 
@@ -75,7 +72,7 @@ def generate_launch_description():
         nodes.append(stage_node)
 
         for i in range(n):
-            namespace = 'robot_' + str(i) if n > 1 else ''
+            namespace = 'robot_' + str(i)
 
             robot_description = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(

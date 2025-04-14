@@ -19,7 +19,7 @@ delays = [4,8,12,16,20,24,28,32,36,40,44,48]
 def loadInitPoses():
     try:
         ConfigIP = configparser.ConfigParser()
-        ConfigIP.read(package_path+"/params/initial_poses.txt")
+        ConfigIP.read(package_path+"/config/initial_poses.txt")
         for option in ConfigIP.options("InitialPoses"):
             initPoses[option] = ConfigIP.get("InitialPoses", option)
     except:
@@ -99,7 +99,7 @@ def launch_setup(context, *args, **kwargs):
 
 
     i = 0;
-    params_file = os.path.join(package_path, 'params', 'nav2-generic_namespace.yaml')
+    params_file = os.path.join(package_path, 'config', 'nav2-generic_namespace.yaml')
 
     for robot in robots:
         #params_file = LaunchConfiguration(f"{robot['name']}_params_file")

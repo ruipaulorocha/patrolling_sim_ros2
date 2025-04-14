@@ -62,7 +62,7 @@ using namespace std::placeholders;
   true // WARNING: Set this to false, if you want a finishing condition.
 
 const std::string PS_path =
-    ament_index_cpp::get_package_share_directory("patrolling_sim_ros2_gazebo");
+    ament_index_cpp::get_package_share_directory("patrolling_sim_ros2");
 
 void PatrolAgent::init(int argc, char **argv) {
   /*
@@ -204,8 +204,8 @@ void PatrolAgent::init(int argc, char **argv) {
     strcpy(string2, "cmd_vel"); // string = "cmd_vel"
     TEAMSIZE = 1;
   } else {
-    sprintf(string1, "/robot%d/odom", ID_ROBOT);
-    sprintf(string2, "/robot%d/cmd_vel", ID_ROBOT);
+    sprintf(string1, "/robot_%d/odom", ID_ROBOT);
+    sprintf(string2, "/robot_%d/cmd_vel", ID_ROBOT);
     TEAMSIZE = ID_ROBOT + 1;
   }
 
@@ -248,7 +248,7 @@ void PatrolAgent::ready() {
   if (ID_ROBOT == -1) {
     strcpy(move_string, "navigate_to_pose"); // string = "move_base
   } else {
-    sprintf(move_string, "/robot%d/navigate_to_pose", ID_ROBOT);
+    sprintf(move_string, "/robot_%d/navigate_to_pose", ID_ROBOT);
   }
 
   this->ac = rclcpp_action::create_client<nav2_msgs::action::NavigateToPose>(
@@ -326,7 +326,7 @@ void PatrolAgent::run() {
   if (ID_ROBOT > -1) {
     std::ostringstream id_string;
     id_string << ID_ROBOT;
-    mb_string = "/robot" + id_string.str() + "/";
+    mb_string = "/robot_" + id_string.str() + "/";
   }
 
   mb_string += "local_costmap/clear_entirely_local_costmap";
@@ -511,14 +511,14 @@ void PatrolAgent::getRobotPose(int robotid, float &x, float &y, float &theta) {
   }
 
   std::stringstream ss;
-  ss << "robot" << robotid;
+  ss << "robot_" << robotid;
   std::string robotname = ss.str();
   std::string sframe = "map"; // Patch David Portugal: Remember that the global
                               // map frame is "/map"
   std::string dframe;
 
   if (ID_ROBOT > -1) {
-    dframe = "base_link";
+    dframe = robotname + "/base_link";
   } else {
     dframe = "base_link";
   }
@@ -802,7 +802,8 @@ void PatrolAgent::send_positions() {
     idx = 0;
   } else {
     char string[20];
-    sprintf(string, "robot%d/map", ID_ROBOT);
+    //sprintf(string, "robot_%d/map", ID_ROBOT);
+    sprintf(string, "map");
     msg.header.frame_id = string;
   }
 

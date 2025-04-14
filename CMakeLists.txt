@@ -214,9 +214,8 @@ install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
 install(TARGETS monitor Conscientious_Reactive Heuristic_Conscientious_Reactive
   Conscientious_Cognitive Cyclic MSP GBS SEBS CBLS Random DTAGreedy
   DTASSI DTASSIPart GoToStartPos twist_stamped_to_twist DESTINATION lib/${PROJECT_NAME})
-install(DIRECTORY params DESTINATION share/${PROJECT_NAME})
+install(DIRECTORY config DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY maps DESTINATION share/${PROJECT_NAME})
-install(DIRECTORY rviz DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY worlds DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY MSP DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY meshes DESTINATION $ENV{HOME}/.gazebo/models/${PROJECT_NAME})
