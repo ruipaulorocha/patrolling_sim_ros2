@@ -141,11 +141,11 @@ def run_experiment(MAP, NROBOTS, INITPOS, ALG_SHORT, LOC_MODE, NAV_MODULE, GWAIT
     print(cmd)
     os.system(cmd)
 
-    os.system('sleep 3')
+    os.system('sleep 1')
 
     cmd_monitor = 'ros2 run patrolling_sim_ros2 monitor '+MAP+' '+ALG_SHORT+' '+NROBOTS + ' --ros-args -p goal_reached_wait:='+str(float(GWAIT))+' -p communication_delay:='+str(COMMDELAY)+' -p navigation_module:='+NAV_MODULE+' -p initial_positions:='+INITPOS
     #cmd_stage = 'ros2 run stage_ros2 stageros ' + dirname + '/maps/'+MAP+'/'+MAP+'.world '
-    cmd_stage = 'ros2 launch patrolling_sim_ros2 stage.launch.py world:=' + dirname + '/maps/'+MAP+'/'+MAP+'.world '
+    cmd_stage = 'ros2 launch patrolling_sim_ros2 stage.launch.py world:=' + dirname + '/maps/'+MAP+'/'+MAP+'.world teamsize:=' + NROBOTS
     print(cmd_monitor)
     print(cmd_stage)
 
@@ -161,26 +161,26 @@ def run_experiment(MAP, NROBOTS, INITPOS, ALG_SHORT, LOC_MODE, NAV_MODULE, GWAIT
     cmd_poses = 'ros2 param set /monitor initial_positions "\''+iposes+'\'"'
     print(cmd_poses)
     os.system(cmd_poses)
-    # os.system('sleep 5')
+    os.system('sleep 2')
 
-    # # Start robots
-    # if (LOC_MODE == 'AMCL'):
-    #     robot_launch = 'robot.launch.py'
-    # else:
-    #     robot_launch = 'robot_fake_loc.launch'
+    # Start robots
+    if (LOC_MODE == 'AMCL'):
+        robot_launch = 'robot.launch.py'
+    else:
+        robot_launch = 'robot_fake_loc.launch'
     
-    # if (TERM == 'xterm'):
-    #     xcmd = 'xterm -e  "'
-    # else:
-    #     xcmd = 'gnome-terminal '
-    #     xcmd = xcmd + ' --tab -e "'
+    if (TERM == 'xterm'):
+        xcmd = 'xterm -e  "'
+    else:
+        xcmd = 'gnome-terminal '
+        xcmd = xcmd + ' --tab -e "'
 
-    # cmd = 'bash -c \'ros2 launch patrolling_sim_ros2 multi_stop_simulation_launch.py map:='+MAP+' n_robots:='+str(NROBOTS)+' use_rviz:='+str(USE_RVIZ)
-    # cmd = cmd + "'"
-    # xcmd = xcmd + cmd + '" '
-    # print(xcmd)
-    # os.system(xcmd)
-    # os.system('sleep 10')
+    cmd = 'bash -c \'ros2 launch patrolling_sim_ros2 multi_stop_simulation_launch.py map:='+MAP+' n_robots:='+str(NROBOTS)+' use_rviz:='+str(USE_RVIZ)
+    cmd = cmd + "'"
+    xcmd = xcmd + cmd + '" '
+    print(xcmd)
+    os.system(xcmd)
+    os.system('sleep 20')
 
     # # Start patrol behaviors
     # gcmd = 'gnome-terminal '
@@ -210,24 +210,24 @@ def run_experiment(MAP, NROBOTS, INITPOS, ALG_SHORT, LOC_MODE, NAV_MODULE, GWAIT
     now = datetime.datetime.now()
     strinittime = now.strftime("%Y%m%d_%H%M%S")
 
-    print("Experiment started at ",strinittime)
-    # wait for termination
-    run = True
-    while (run):
-        #t = getROStime()
-        #print("Elapsed time: ",t," sec Timeout = ",TIMEOUT)
-        if (not getSimulationRunning()):        
-            run = False;
-        os.system('sleep 1')
+    print("Experiment started at ",strinittime,". Launch sequence completed!")
+    # # wait for termination
+    # run = True
+    # while (run):
+    #     #t = getROStime()
+    #     #print("Elapsed time: ",t," sec Timeout = ",TIMEOUT)
+    #     if (not getSimulationRunning()):        
+    #         run = False;
+    #     os.system('sleep 1')
 
-    #print "Taking a screenshot..."
-    #os.system('rostopic pub /stageGUIRequest std_msgs/String "data: \'screenshot\'"  --once')
-    #os.system('sleep 5')
-    #cmd = 'mv ~/.ros/stage-000005.png results/screenshots/stage-%s.png' %(strinittime)
-    #os.system(cmd)
+    # #print "Taking a screenshot..."
+    # #os.system('rostopic pub /stageGUIRequest std_msgs/String "data: \'screenshot\'"  --once')
+    # #os.system('sleep 5')
+    # #cmd = 'mv ~/.ros/stage-000005.png results/screenshots/stage-%s.png' %(strinittime)
+    # #os.system(cmd)
 
-    print("Terminating Experiment")
-    os.system("./stop_experiment.sh")
+    # print("Terminating Experiment")
+    # os.system("./stop_experiment.sh")
 
 
 class DIP(tk.Frame):
@@ -383,7 +383,10 @@ class DIP(tk.Frame):
       self.parent.destroy()
       
     def kill_demo(self):
+      print("Terminating Experiment")
       os.system("ros2 param set /monitor /simulation_running \\'false\\'")
+      os.system("./stop_experiment.sh")
+      #self.quit()
       
       
     def saveConfigFile(self):
