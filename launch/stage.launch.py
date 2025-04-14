@@ -66,7 +66,8 @@ def generate_launch_description():
                 #'enable_gui': False,
                 'base_watchdog_timeout': 1.0,
                 'world_file': context.launch_configurations['world'],
-                'odom_topic': 'odom'
+                'odom_topic': 'odom',
+                'use_sim_time': True
             }],
             remappings=remappings,
             arguments=['--ros-args', '--log-level', log_level]
@@ -93,6 +94,7 @@ def generate_launch_description():
                 package='patrolling_sim_ros2',
                 executable='twist_stamped_to_twist',
                 name='twist_stamped_to_twist',
+                parameters=[{'use_sim_time': True}],
                 namespace = namespace,
                 output='screen',
                 arguments=['--ros-args', '--log-level', log_level],
@@ -105,8 +107,6 @@ def generate_launch_description():
     launch_nodes_fn = OpaqueFunction(function=launch_nodes)
 
     # specify the actions
-    set_use_sim_time = launch_ros.actions.SetParameter(name = 'use_sim_time', value = True)
-    ld.add_action(set_use_sim_time)
     ld.add_action(launch_nodes_fn)
 
     return ld

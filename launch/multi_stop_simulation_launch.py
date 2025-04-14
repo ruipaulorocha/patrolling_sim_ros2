@@ -81,6 +81,7 @@ def launch_setup(context, *args, **kwargs):
         output='screen',
         parameters=[{
             'yaml_filename': map_yaml,
+            'use_sim_time': True,
             'autostart_node': True
         }]
     )
@@ -90,6 +91,7 @@ def launch_setup(context, *args, **kwargs):
         package='rviz2',
         executable='rviz2',
         name='rviz2',
+        parameters=[{'use_sim_time': True}],
         arguments=['-d' + context.launch_configurations['rviz_config']],
         condition=IfCondition(use_rviz)
     )
@@ -123,7 +125,7 @@ def launch_setup(context, *args, **kwargs):
                                   'params_file': params_file,
                                   'autostart': autostart,
                                   'use_rviz': 'False',
-                                  'use_simulator': 'False',
+                                  'use_sim_time': 'True',
                                   'headless': 'False',
                                   'x_pose': TextSubstitution(text=str(robot['x_pose'])),
                                   'y_pose': TextSubstitution(text=str(robot['y_pose'])),

@@ -114,7 +114,7 @@ def generate_launch_description():
             ),
             launch_arguments=[
                 ('namespace',  namespace),
-                ('use_sim_time',        'True'),
+                ('use_sim_time',        use_sim_time),
                 ('use_localization',    'False'),
                 ('params_file',         params_file),
                 ('use_composition',     'False')

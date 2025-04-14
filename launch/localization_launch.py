@@ -109,7 +109,8 @@ def generate_launch_description():
                         'y':    pose['y'],
                         'z':    0.0,
                         'yaw':  pose['yaw']
-                     }
+                     },
+                     'use_sim_time': True
                 }
             ],
             remappings=remappings),
