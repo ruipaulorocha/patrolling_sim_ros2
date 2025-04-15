@@ -6,7 +6,7 @@ This package contains the implementation of several algorithms for multi-robot p
 
 The [original code base](https://wiki.ros.org/patrolling_sim) was developed by [David Portugal](davidbsp@isr.uc.pt) at ISR - University of Coimbra during his PhD thesis work advised by [Prof. Rui P. Rocha](mailto:rprocha@isr.uc.pt). You can freely reuse the code in your own academic projects provided that you give credit to the authors in your related publications, by citing the following reference:
 
-_D. Portugal & R. P. Rocha (2016). Cooperative Multi-Robot Patrol with Bayesian Learning, Autonomous Robots, 40(5):929-953, Springer_
+_D. Portugal & R. P. Rocha (2016). Cooperative Multi-Robot Patrol with Bayesian Learning, Autonomous Robots, 40(5):929-953, Springer. DOI: [10.1007/s10514-015-9503-7](https://doi.org/10.1007/s10514-015-9503-7)_
 
 
 Besides porting the code base to ROS Jazzy distro, this version of the package extends previous versions of `patrolling_sim` with an improved structure of the code that allows easy integration of new algorithms, an improved navigation configuration that allows the robots to move at 1 m/s and to avoid most of conflicting situations, and a better management of the experiments and generation of the results.
