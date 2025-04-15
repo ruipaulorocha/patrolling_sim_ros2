@@ -204,8 +204,8 @@ void PatrolAgent::init(int argc, char **argv) {
     strcpy(string2, "cmd_vel"); // string = "cmd_vel"
     TEAMSIZE = 1;
   } else {
-    sprintf(string1, "/robot_%d/odom", ID_ROBOT);
-    sprintf(string2, "/robot_%d/cmd_vel", ID_ROBOT);
+    sprintf(string1, "robot_%d/odom", ID_ROBOT);
+    sprintf(string2, "robot_%d/cmd_vel", ID_ROBOT);
     TEAMSIZE = ID_ROBOT + 1;
   }
 
@@ -513,7 +513,7 @@ void PatrolAgent::getRobotPose(int robotid, float &x, float &y, float &theta) {
   std::stringstream ss;
   ss << "robot_" << robotid;
   std::string robotname = ss.str();
-  std::string sframe = "map"; // Patch David Portugal: Remember that the global
+  std::string sframe = "/map"; // Patch David Portugal: Remember that the global
                               // map frame is "/map"
   std::string dframe;
 
@@ -672,7 +672,8 @@ void PatrolAgent::goalFeedbackCallback(
   if (value == -1) {
     value = 0;
   }
-  interference = check_interference(value);
+  //interference = check_interference(value); // feature DISABLED!
+  interference = false;
 }
 
 void PatrolAgent::send_goal_reached() {
@@ -699,7 +700,7 @@ bool PatrolAgent::check_interference(
   double dist_quad;
 
   if (n_ptr->now().seconds() - last_interference < 10) // seconds
-    return false; // false if within 7 seconds from the last one
+    return false; // false if within 10 seconds from the last one
 
   /* Poderei usar TEAMSIZE para afinar */
   for (i = 0; i < robot_id; i++) { // percorrer vizinhos (assim asseguro q cada
@@ -802,8 +803,7 @@ void PatrolAgent::send_positions() {
     idx = 0;
   } else {
     char string[20];
-    //sprintf(string, "robot_%d/map", ID_ROBOT);
-    sprintf(string, "map");
+    sprintf(string, "robot_%d/map", ID_ROBOT);
     msg.header.frame_id = string;
   }
 
