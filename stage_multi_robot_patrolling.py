@@ -42,7 +42,7 @@ LocalizationMode_list = ['amcl']
 
 NavigationMode_list = ['nav2']
 
-GWait_list = ['0','3','10']
+GWait_list = ['0','1','3','6']
 
 CommDelay_list = ['0','0.2','1','2']
 
@@ -179,7 +179,7 @@ def run_experiment(MAP, NROBOTS, INITPOS, ALG_SHORT, LOC_MODE, NAV_MODULE, GWAIT
     xcmd = xcmd + '"bash -c \'' + cmd + '\'" &'
     #print(xcmd)
     os.system(xcmd)
-    os.system('sleep 20')
+    os.system('sleep '+str(int(NROBOTS)*8))
 
     # Start patrol behaviors
     gcmd = 'gnome-terminal '
