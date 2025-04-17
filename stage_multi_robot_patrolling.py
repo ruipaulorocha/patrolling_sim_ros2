@@ -44,6 +44,8 @@ NavigationMode_list = ['nav2']
 
 GWait_list = ['0','1','3','6']
 
+Timeout_list = ['180.0', '20.0', '10.0']
+
 CommDelay_list = ['0','0.2','1','2']
 
 LostMsgRate_list = ['0','0.1','0.2','0.3']
@@ -104,12 +106,13 @@ def getSimulationRunning():
 # Terminates if simulation is stopped (/simulation_running param is false)
 # or if timeout is reached (if this is >0)
 # CUSTOM_STAGE: use of extended API for stage (requires custom stage and stage_ros).
-def run_experiment(MAP, NROBOTS, INITPOS, ALG_SHORT, LOC_MODE, NAV_MODULE, GWAIT, COMMDELAY, TERM, TIMEOUT, CUSTOM_STAGE, SPEEDUP): #, USE_RVIZ):
+def run_experiment(MAP, NROBOTS, INITPOS, ALG_SHORT, LOC_MODE, NAV_MODULE, GWAIT, COMMDELAY, TERM, TIMEOUT, CUSTOM_STAGE, SPEEDUP, MAX_TIME_TO_INIT): #, USE_RVIZ):
 
     ALG = findAlgName(ALG_SHORT)
     print("Run the experiment")
     print("Loading map ",MAP)
     print("Initial pos ",INITPOS)
+    print("Maximum time to initialize after 1st robot becomes active ",MAX_TIME_TO_INIT)
     print("N. robot ",NROBOTS)
     print("Algorithm ",ALG," ",ALG_SHORT)
     print("Localization Mode ",LOC_MODE)
@@ -119,7 +122,7 @@ def run_experiment(MAP, NROBOTS, INITPOS, ALG_SHORT, LOC_MODE, NAV_MODULE, GWAIT
     print("Terminal ",TERM)
     print("Timeout ",TIMEOUT)
     print("Custom Stage ",CUSTOM_STAGE)
-    print("Simulator speed-up ",SPEEDUP)    
+    print("Simulator speed-up ",SPEEDUP)   
     #print("Use Rviz ", USE_RVIZ)
 
     if (TIMEOUT>0):
@@ -142,7 +145,7 @@ def run_experiment(MAP, NROBOTS, INITPOS, ALG_SHORT, LOC_MODE, NAV_MODULE, GWAIT
     os.system(cmd)
     #os.system('sleep 1')
 
-    cmd_monitor = 'ros2 run patrolling_sim_ros2 monitor '+MAP+' '+ALG_SHORT+' '+NROBOTS + ' --ros-args -p goal_reached_wait:='+str(float(GWAIT))+' -p communication_delay:='+str(COMMDELAY)+' -p navigation_module:='+NAV_MODULE+' -p initial_positions:='+INITPOS
+    cmd_monitor = 'ros2 run patrolling_sim_ros2 monitor '+MAP+' '+ALG_SHORT+' '+NROBOTS + ' --ros-args -p goal_reached_wait:='+str(float(GWAIT))+' -p communication_delay:='+str(COMMDELAY)+' -p navigation_module:='+NAV_MODULE+' -p initial_positions:='+INITPOS+' -p max_time_to_init:='+MAX_TIME_TO_INIT
     print(cmd_monitor)
 
     #cmd_stage = 'ros2 run stage_ros2 stageros ' + dirname + '/maps/'+MAP+'/'+MAP+'.world '
@@ -183,7 +186,7 @@ def run_experiment(MAP, NROBOTS, INITPOS, ALG_SHORT, LOC_MODE, NAV_MODULE, GWAIT
     xcmd = xcmd + '"bash -c \'' + cmd + '\'" &'
     #print(xcmd)
     os.system(xcmd)
-    os.system('sleep '+str(int(NROBOTS)*12))
+    os.system('sleep '+str(int(NROBOTS)*9))
 
     # Start patrol behaviors
     gcmd = 'gnome-terminal '
@@ -349,6 +352,20 @@ class DIP(tk.Frame):
 
         _row = _row + 1
 
+        lbl = Label(self, text="Initialization timeout")
+        lbl.grid(sticky=W, row = _row, column= 0, pady=4, padx=5)
+
+        self.timeout_list = Timeout_list
+        self.timeout_ddm = StringVar(self)
+        try:
+            lasttimeout=self.oldConfigs["timeout"]
+        except:
+            lasttimeout=self.timeout_list[0]
+        self.timeout_ddm.set(lasttimeout)
+        tk.OptionMenu(self, self.timeout_ddm, *self.timeout_list).grid(sticky=W, row=_row, column=1, pady=4, padx=5)
+
+        _row = _row + 1
+
         lbl = Label(self, text="Terminal")
         lbl.grid(sticky=W, row = _row, column= 0, pady=4, padx=5)
 
@@ -392,7 +409,7 @@ class DIP(tk.Frame):
     
     def launch_script(self):
         self.saveConfigFile();
-        _thread.start_new_thread( run_experiment, (self.map_ddm.get(), self.robots_ddm.get(), INITPOS_DEFAULT, self.alg_ddm.get(),self.locmode_ddm.get(), self.navmode_ddm.get(), self.gwait_ddm.get(), COMMDELAY_DEFAULT, self.term_ddm.get(),0,"false",1.0 )) #,self.rviz_ddm.get() ))
+        _thread.start_new_thread( run_experiment, (self.map_ddm.get(), self.robots_ddm.get(), INITPOS_DEFAULT, self.alg_ddm.get(),self.locmode_ddm.get(), self.navmode_ddm.get(), self.gwait_ddm.get(), COMMDELAY_DEFAULT, self.term_ddm.get(),0,"false",1.0, self.timeout_ddm.get() ) ) #,self.rviz_ddm.get() ))
         self.experiment_active = True
 
     def quit(self):
@@ -428,6 +445,7 @@ class DIP(tk.Frame):
       f.write("locmode: %s\n"%self.locmode_ddm.get())
       f.write("navmode: %s\n"%self.navmode_ddm.get())
       f.write("gwait: %s\n"%self.gwait_ddm.get())
+      f.write("timeout: %s\n"%self.timeout_ddm.get())
       f.write("term: %s\n"%self.term_ddm.get())
       f.close()
 
@@ -449,7 +467,7 @@ def main():
     root = tk.Tk()
     DIP(root)
     #root.geometry("400x380+0+0")
-    root.geometry("300x380+0+0")
+    root.geometry("300x420+0+0")
     root.mainloop()  
 
   elif (len(sys.argv)<10):

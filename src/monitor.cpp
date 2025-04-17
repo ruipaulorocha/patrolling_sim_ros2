@@ -75,6 +75,8 @@ using namespace std;
         // considered dead
 #define TIMEOUT_WRITE_RESULTS                                                  \
   180.0 // (seconds) timeout for writing results to file
+
+
 // For hystograms
 #define RESOLUTION 1.0    // seconds
 #define MAXIDLENESS 500.0 // seconds
@@ -122,7 +124,7 @@ bool goal_reached = false;
 int goal;
 double time_zero, last_report_time;
 time_t real_time_zero;
-double goal_reached_wait, comm_delay, lost_message_rate;
+double goal_reached_wait, comm_delay, lost_message_rate, max_time_to_init;
 string algorithm, algparams, nav_mod, initial_positions;
 
 // const std::string PS_path = ros::package::getPath("patrolling_sim");
@@ -147,6 +149,9 @@ double min_idleness = 0.0, max_idleness = 0.0;
 double gavg, gstddev;
 double gT0 = 0.0, gT1 = 0.0, gT2 = 0.0;
 
+rclcpp::Time end_of_wait;
+bool first_robot_active = false, timeout_init = false;
+
 uint interference_cnt = 0;
 uint complete_patrol = 0;
 uint patrol_cnt = 1;
@@ -168,6 +173,12 @@ void dolog(const char *str) {
     fprintf(logfile, "%s\n", str);
     fflush(logfile);
   }
+}
+
+rclcpp::Duration convertTime(double secs){
+  int s = (int) secs;
+  unsigned int ns = (unsigned int) ( (secs - ((double) s)) * 1e9);
+  return rclcpp::Duration(s, ns);
 }
 
 void update_stats(int id_robot, int goal);
@@ -205,19 +216,27 @@ void resultsCB(const std_msgs::msg::Int16MultiArray &msg) {
   switch (msg_type) {
   case INITIALIZE_MSG_TYPE: {
     if (initialize && vresults[2] == 1) {
-      if (init_robots[id_robot] == false) { // receive init msg: "ID,msg_type,1"
+      if (id_robot >= 0 && init_robots[id_robot] == false) { // receive init msg: "ID,msg_type,1"
         printf("Robot [ID = %d] is Active!\n", id_robot);
         init_robots[id_robot] = true;
+        cnt++;
+
+        if (!first_robot_active){
+          end_of_wait = n_ptr->get_clock()->now() + convertTime(max_time_to_init);
+          if (teamsize > 1)
+            printf(" It's the first robot to become active.\n Will wait at most %.1f secs. for other %d robot(s) to become active.\n",
+              max_time_to_init, teamsize-cnt);
+          first_robot_active = true;
+        }
 
         // Patch D.Portugal (needed to support other simulators besides Stage):
         // double current_time = ros::Time::now().toSec();
         double current_time = n_ptr->now().seconds();
         // initialize last_goal_reached:
         set_last_goal_reached(id_robot, current_time);
-
-        cnt++;
       }
-      if (cnt == teamsize) {
+
+      if (cnt == teamsize || (cnt < teamsize && timeout_init)) {
 
         // check if robots need to travel to starting positions
         while (goto_start_pos) { // if or while (?)
@@ -260,6 +279,7 @@ void resultsCB(const std_msgs::msg::Int16MultiArray &msg) {
           } */
         }
 
+        if (cnt < teamsize) printf(" (*** Though %d robot(s) is(are) missing. ***)\n", teamsize-cnt);
         printf("All Robots GO!\n");
         initialize = false;
 
@@ -907,6 +927,18 @@ int main(int argc, char **argv) { // pass TEAMSIZE GRAPH ALGORITHM
                 lost_message_rate);
   }
 
+  // maximum waiting time before assuming every robot is active
+  n_ptr->declare_parameter<double>("max_time_to_init", 180.0);
+  if (!n_ptr->get_parameter("max_time_to_init", max_time_to_init)) {
+    max_time_to_init = 180.0;
+    RCLCPP_WARN(
+        n_ptr->get_logger(),
+        "Cannot read parameter max_time_to_init. Using default value 180.0!");
+  } else {
+    RCLCPP_INFO(n_ptr->get_logger(), "Parameter max_time_to_init set: %f",
+                max_time_to_init);
+  }
+
   // if (! ros::param::get("/initial_positions", initial_positions)) {
   n_ptr->declare_parameter<string>("initial_positions", "default");
   if (!n_ptr->get_parameter("initial_positions", initial_positions)) {
@@ -1121,6 +1153,17 @@ int main(int argc, char **argv) { // pass TEAMSIZE GRAPH ALGORITHM
       dolog("    check - end");
 
     } // if ! initialize
+    else if (cnt < teamsize && first_robot_active && !timeout_init){
+      timeout_init = (n_ptr->get_clock()->now() >= end_of_wait);
+      if (timeout_init){
+        printf("TIMEOUT when waiting for robots to become active. Going to start mission anyway!\n");
+        std_msgs::msg::Int16MultiArray msg;
+        msg.data.push_back(-1); // dummy robot_id!
+        msg.data.push_back(INITIALIZE_MSG_TYPE);
+        msg.data.push_back(1); // dummy robot initialized
+        resultsCB(msg); // force call to callback function
+      }
+    }
 
     // current_time = ros::Time::now().toSec();
     // ros::spinOnce();
