@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+#
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -124,6 +126,7 @@ def launch_setup(context, *args, **kwargs):
                                   'use_sim_time': 'True',
                                   'params_file': params_file,
                                   'autostart': autostart,
+                                  'use_amcl': LaunchConfiguration('use_amcl'),
                                   'use_rviz': 'False',
                                   'use_sim_time': 'True',
                                   'headless': 'False',
@@ -176,6 +179,7 @@ def generate_launch_description():
         DeclareLaunchArgument('rviz_config',default_value=os.path.join(package_path, 'rviz', 'nav2_namespaced_view.rviz'),description='Full path to the RVIZ config file to use.'),
         DeclareLaunchArgument('map'),
         DeclareLaunchArgument('n_robots'),
+        DeclareLaunchArgument('use_amcl', default_value='True', description='Use AMCL algorithm if true'),
         OpaqueFunction(function=launch_setup)
     ])
 

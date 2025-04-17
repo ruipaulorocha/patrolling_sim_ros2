@@ -1,17 +1,5 @@
-# Copyright (c) 2018 Intel Corporation
+#!/usr/bin/env python3
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -54,6 +42,10 @@ def generate_launch_description():
         'use_namespace',
         default_value='false',
         description='Whether to apply a namespace to the navigation stack')
+
+    declare_use_amcl_cmd = DeclareLaunchArgument(
+            'use_amcl', default_value='true',
+            description='Whether use AMCL algorithm')
 
     declare_slam_cmd = DeclareLaunchArgument(
         'slam',
@@ -98,14 +90,13 @@ def generate_launch_description():
                                                        'localization_launch.py')),
             condition=IfCondition(PythonExpression(['not ', slam])),
             launch_arguments={'namespace': namespace,
-                              'map': map_yaml_file,
                               'use_sim_time': use_sim_time,
+                              'use_amcl': LaunchConfiguration('use_amcl'),
                               'autostart': autostart,
                               'params_file': params_file,
                               'x_pose': pose['x'],
                               'y_pose': pose['y'],
                               'yaw_pose': pose['yaw'],
-                              #'use_lifecycle_mgr': 'false'
                               }.items()),
 
         IncludeLaunchDescription(
@@ -131,6 +122,7 @@ def generate_launch_description():
     # Declare the launch options
     ld.add_action(declare_namespace_cmd)
     ld.add_action(declare_use_namespace_cmd)
+    ld.add_action(declare_use_amcl_cmd)
     ld.add_action(declare_slam_cmd)
     ld.add_action(declare_map_yaml_cmd)
     ld.add_action(declare_use_sim_time_cmd)

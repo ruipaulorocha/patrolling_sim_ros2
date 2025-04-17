@@ -1,17 +1,5 @@
-# Copyright (c) 2018 Intel Corporation
+#!/usr/bin/env python3
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -21,6 +9,7 @@ from launch.actions import DeclareLaunchArgument, SetEnvironmentVariable
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from nav2_common.launch import ReplaceString, RewrittenYaml
+from launch.conditions import IfCondition, UnlessCondition
 
 
 def generate_launch_description():
@@ -28,15 +17,13 @@ def generate_launch_description():
     bringup_dir = get_package_share_directory('patrolling_sim_ros2')
 
     namespace = LaunchConfiguration('namespace')
-    map_yaml_file = LaunchConfiguration('map')
     use_sim_time = LaunchConfiguration('use_sim_time')
     autostart = LaunchConfiguration('autostart')
     params_file = LaunchConfiguration('params_file')
-    #lifecycle_nodes = ['map_server', 'amcl']
-    lifecycle_nodes = ['amcl']
     pose = {'x': LaunchConfiguration('x_pose'),
             'y': LaunchConfiguration('y_pose'),
             'yaw': LaunchConfiguration('yaw_pose')}
+    use_amcl = LaunchConfiguration('use_amcl')
 
     remappings = [('map', '/map')]
 
@@ -69,14 +56,16 @@ def generate_launch_description():
             description='Top-level namespace'),
 
         DeclareLaunchArgument(
-            'map',
-            default_value=os.path.join(
-                bringup_dir, 'maps', 'turtlebot3_world.yaml'),
-            description='Full path to map yaml file to load'),
-
-        DeclareLaunchArgument(
             'use_sim_time', default_value='false',
             description='Use simulation (Gazebo) clock if true'),
+
+        DeclareLaunchArgument(
+            'use_amcl', default_value='true',
+            description='Use AMCL algorithm if true'),
+
+        DeclareLaunchArgument(
+            'use_amcl', default_value='true',
+            description='Use AMCL algorithm if true'),
 
         DeclareLaunchArgument(
             'autostart', default_value='true',
@@ -87,14 +76,6 @@ def generate_launch_description():
             default_value=os.path.join(
                 bringup_dir, 'params', 'nav2_params.yaml'),
             description='Full path to the ROS2 parameters file to use'),
-
-        # Node(
-        #     package='nav2_map_server',
-        #     executable='map_server',
-        #     name='map_server',
-        #     output='screen',
-        #     parameters=[configured_params],
-        #     remappings=remappings),
 
         Node(
             package='nav2_amcl',
@@ -113,14 +94,34 @@ def generate_launch_description():
                      'use_sim_time': True
                 }
             ],
-            remappings=remappings),
+            remappings=remappings,
+            condition=IfCondition(use_amcl)
+        ),
 
         Node(
-            package='nav2_lifecycle_manager',
-            executable='lifecycle_manager',
-            name='lifecycle_manager_localization',
-            output='screen',
-            parameters=[{'use_sim_time': use_sim_time},
-                        {'autostart': autostart},
-                        {'node_names': lifecycle_nodes}])
+            package = 'fake_localization_ros2',
+            executable='fake_localization',
+            name='fake_localization',
+            parameters=[
+                configured_params,
+                {
+                    'delta_x':          pose['x'],
+                    'delta_y':          pose['y'],
+                    'delta_yaw':        pose['yaw']
+                }
+            ],
+            condition=UnlessCondition(use_amcl)
+        ),
+
+        # ** The following node isn't needed because autostart_node parameter of amcl node is TRUE in yaml file
+        # Node(
+        #     package='nav2_lifecycle_manager',
+        #     executable='lifecycle_manager',
+        #     name='lifecycle_manager_localization',
+        #     output='screen',
+        #     parameters=[{'use_sim_time': use_sim_time},
+        #                 {'autostart': autostart},
+        #                 {'node_names': ['amcl']
+        #                 }],
+        #     condition=IfCondition(use_amcl))
     ])

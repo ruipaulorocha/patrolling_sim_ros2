@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# -*- coding: utf-8 -*-
+#
 import os
 import launch_ros
 from launch import LaunchDescription
@@ -19,7 +19,7 @@ def generate_launch_description():
     stage_world_arg = DeclareLaunchArgument(
         'world',
         default_value=TextSubstitution(text =  'default'),
-        description='Absolute path of world file'
+        description='World name'
     )
     log_level_arg = DeclareLaunchArgument(
         'log_level',

@@ -16,7 +16,8 @@ Besides porting the code base to ROS Jazzy distro, this version of the package e
 Add to your ROS workspace the packages below which need to be compiled from source. Follow the instructions available on each GitHub repository about these packages' dependencies.
 
 - [`stage_ros2`](https://github.com/ruipaulorocha/stage_ros2)
-- [p3dx\_ description\_ ros](https://github.com/ruipaulorocha/p3dx_description_ros.git)
+- [`p3dx_description_ros`](https://github.com/ruipaulorocha/p3dx_description_ros.git)
+- [`fake_localization_ros2`](https://github.com/ruipaulorocha/fake_localization_ros2)
 
 Afterwards, install the other required dependencies with the following command, which assumes that you're in your ROS workspace's root directory:
 ```bash

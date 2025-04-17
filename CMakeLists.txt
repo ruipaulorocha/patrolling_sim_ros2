@@ -26,6 +26,7 @@ find_package(std_srvs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(stage_ros2 REQUIRED)
 find_package(p3dx_description_ros REQUIRED)
+find_package(fake_localization_ros2 REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 

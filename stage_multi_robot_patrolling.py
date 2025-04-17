@@ -38,7 +38,7 @@ Map_names = ['cumberland','example','grid','1r5','broughton','DIAG_labs','DIAG_f
 
 NRobots_list = ['1','2','3','4','6','8','10','12']
 
-LocalizationMode_list = ['amcl']
+LocalizationMode_list = ['amcl', 'fake localization']
 
 NavigationMode_list = ['nav2']
 
@@ -168,7 +168,11 @@ def run_experiment(MAP, NROBOTS, INITPOS, ALG_SHORT, LOC_MODE, NAV_MODULE, GWAIT
     # else:
     #     robot_launch = 'robot_fake_loc.launch'
 
-    cmd = 'ros2 launch patrolling_sim_ros2 multi_stop_simulation_launch.py map:='+MAP+' n_robots:='+str(NROBOTS)+' use_rviz:=false'
+    cmd = 'ros2 launch patrolling_sim_ros2 multi_stop_simulation_launch.py map:=' + MAP + \
+      ' n_robots:=' + str(NROBOTS) + \
+      ' use_rviz:=false' + \
+      ' use_amcl:=' + ('true' if LOC_MODE == 'amcl' else 'false')
+
     print(cmd)
 
     if (TERM == 'xterm'):
