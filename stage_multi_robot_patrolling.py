@@ -33,7 +33,7 @@ Alg_names = [
         [ 'DTAP', 'DTASSIPart' ]
      ]
 
-Map_names = ['cumberland','example','grid','1r5','broughton','DIAG_labs','DIAG_floor1','ctcv']   
+Map_names = ['cumberland','example','grid','1r5','broughton','DIAG_labs','DIAG_floor1','ctcv','move_base_arena']   
 #Map_names = ['grid','1r5','broughton','DIAG_labs','ctcv']   
 
 NRobots_list = ['1','2','3','4','6','8','10','12']
@@ -183,7 +183,7 @@ def run_experiment(MAP, NROBOTS, INITPOS, ALG_SHORT, LOC_MODE, NAV_MODULE, GWAIT
     xcmd = xcmd + '"bash -c \'' + cmd + '\'" &'
     #print(xcmd)
     os.system(xcmd)
-    os.system('sleep '+str(int(NROBOTS)*10))
+    os.system('sleep '+str(int(NROBOTS)*12))
 
     # Start patrol behaviors
     gcmd = 'gnome-terminal '
@@ -383,11 +383,11 @@ class DIP(tk.Frame):
         launchButton = Button(self, text="Start",command=self.launch_script)
         launchButton.grid(sticky=W, row=_row, column=0, pady=4, padx=5)
         
-        launchButton = Button(self, text="Stop",command=self.kill_demo)
+        launchButton = Button(self, text="Stop",command=self.leave_app) #self.kill_demo)
         launchButton.grid(sticky=W, row=_row, column=1, pady=4, padx=5)
 
-        launchButton = Button(self, text="Quit",command=self.leave_app)
-        launchButton.grid(sticky=W, row=_row, column=2, pady=4, padx=5)
+        # launchButton = Button(self, text="Quit",command=self.leave_app)
+        # launchButton.grid(sticky=W, row=_row, column=2, pady=4, padx=5)
         
     
     def launch_script(self):
@@ -448,7 +448,8 @@ def main():
   if (len(sys.argv)==1):
     root = tk.Tk()
     DIP(root)
-    root.geometry("400x380+0+0")
+    #root.geometry("400x380+0+0")
+    root.geometry("300x380+0+0")
     root.mainloop()  
 
   elif (len(sys.argv)<10):

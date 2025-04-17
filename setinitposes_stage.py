@@ -28,7 +28,7 @@ def setIP(mapname, vip):
     if (n == 1):
         # inactive robot for having correct namespaces
         fr.write(
-            'crobot( pose [ -2.0   -2.0    0   0.0 ]   name "robot1"  color "red")\n')
+            'crobot( pose [ -10.0   -10.0    0   0.0 ]   name "robot1"  color "red")\n')
 
     fr.close()
 

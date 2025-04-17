@@ -513,7 +513,7 @@ void PatrolAgent::getRobotPose(int robotid, float &x, float &y, float &theta) {
   std::stringstream ss;
   ss << "robot_" << robotid;
   std::string robotname = ss.str();
-  std::string sframe = "/map"; // Patch David Portugal: Remember that the global
+  std::string sframe = "map"; // Patch David Portugal: Remember that the global
                               // map frame is "/map"
   std::string dframe;
 
