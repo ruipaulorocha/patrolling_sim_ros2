@@ -6,10 +6,19 @@ This package contains the implementation of several algorithms for multi-robot p
 
 The [original code base](https://wiki.ros.org/patrolling_sim) was developed by [David Portugal](davidbsp@isr.uc.pt) at ISR - University of Coimbra during his PhD thesis work advised by [Prof. Rui P. Rocha](mailto:rprocha@isr.uc.pt). You can freely reuse the code in your own academic projects provided that you give credit to the authors in your related publications, by citing the following reference:
 
-_D. Portugal & R. P. Rocha (2016). Cooperative Multi-Robot Patrol with Bayesian Learning, Autonomous Robots, 40(5):929-953, Springer. DOI: [10.1007/s10514-015-9503-7](https://doi.org/10.1007/s10514-015-9503-7)_
+- _Portugal, D. & Rocha, R.P. (2016). Cooperative multi-robot patrol with Bayesian learning, Autonomous Robots, 40(5):929-953, Springer. DOI: [10.1007/s10514-015-9503-7](https://doi.org/10.1007/s10514-015-9503-7)_
 
 
 Besides porting the code base to ROS Jazzy distro, this version of the package extends previous versions of `patrolling_sim` with an improved structure of the code that allows easy integration of new algorithms, an improved navigation configuration that allows the robots to move at 1 m/s and to avoid most of conflicting situations, and a better management of the experiments and generation of the results.
+
+The first effort to port the package to ROS2 was carried out by João Castilho during his MSc dissertation work:
+
+- _Castilho, João (2022). ROS 2.0: Study and evaluation of ROS 2 in comparison with ROS 1, MSc dissertation, University of Coimbra. Advisors: Rui P. Rocha, David Portugal. [URL](https://hdl.handle.net/10316/102876)_
+
+The key results of this MSc dissertation were later on published in a journal:
+
+- _Portugal, D., Rocha, R.P., & Castilho, J. (2024).  Inquiring the robot operating system community on the state of adoption of the ROS 2 robotics middleware, International Journal of Intelligent Robotics and Applications 40(5):929-953, Springer. DOI: [10.1007/s41315-024-00393-4](https://doi.org/10.1007/s41315-024-00393-4)_
+
 
 ## Dependencies
 
