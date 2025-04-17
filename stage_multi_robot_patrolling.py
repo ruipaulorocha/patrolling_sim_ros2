@@ -186,7 +186,7 @@ def run_experiment(MAP, NROBOTS, INITPOS, ALG_SHORT, LOC_MODE, NAV_MODULE, GWAIT
     xcmd = xcmd + '"bash -c \'' + cmd + '\'" &'
     #print(xcmd)
     os.system(xcmd)
-    os.system('sleep '+str(int(NROBOTS)*9))
+    os.system('sleep '+str(int(NROBOTS)*11))
 
     # Start patrol behaviors
     gcmd = 'gnome-terminal '
