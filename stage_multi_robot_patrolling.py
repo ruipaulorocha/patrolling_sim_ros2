@@ -193,13 +193,13 @@ def run_experiment(MAP, NROBOTS, INITPOS, ALG_SHORT, LOC_MODE, NAV_MODULE, GWAIT
     for i in range(0,int(NROBOTS)):
         print("Run patrol robot ",i)
         if (ALG_SHORT=='MSP'):
-            cmd = ('bash -c \'ros2 run patrolling_sim_ros2 '+ALG+' 0 ' +MAP+ ' ' +str(i)+' MSP/'+MAP+'/'+MAP+'_'+str(NROBOTS)+'_'+str(i)+' --ros-args -p goal_reached_wait:='+str(float(GWAIT))+ ' -p communication_delay:='+str(COMMDELAY)+ ' --remap __name:=patrol_robot_'+str(i)+' -r __ns:=/robot_'+str(i)+' -p initial_pos:=\"'+iposes.replace(" ","")+'\"\'')
+            cmd = ('bash -c \'ros2 run patrolling_sim_ros2 '+ALG+' 0 ' +MAP+ ' ' +str(i)+' MSP/'+MAP+'/'+MAP+'_'+str(NROBOTS)+'_'+str(i)+' --ros-args -p goal_reached_wait:='+str(float(GWAIT))+ ' -p communication_delay:='+str(COMMDELAY)+ ' --remap __name:=patrol_robot_'+str(i)+' -r __ns:=/robot_'+str(i)+' -p use_sim_time:=True'+' -p initial_pos:=\"'+iposes.replace(" ","")+'\"\'')
         elif (ALG_SHORT=='GBS' or ALG_SHORT=='SEBS' or ALG_SHORT=='CBLS'):
-            cmd = ('bash -c \'ros2 run patrolling_sim_ros2 '+ALG+' 0 ' +MAP+ ' ' +str(i)+' '+str(NROBOTS)+' --ros-args -p goal_reached_wait:='+str(float(GWAIT))+ ' -p communication_delay:='+str(COMMDELAY) + ' --remap __name:=patrol_robot_'+str(i)+ ' -r __ns:=/robot_'+str(i)+' -p initial_pos:=\"'+iposes.replace(" ","")+'\"\'')
+            cmd = ('bash -c \'ros2 run patrolling_sim_ros2 '+ALG+' 0 ' +MAP+ ' ' +str(i)+' '+str(NROBOTS)+' --ros-args -p goal_reached_wait:='+str(float(GWAIT))+ ' -p communication_delay:='+str(COMMDELAY) + ' --remap __name:=patrol_robot_'+str(i)+ ' -r __ns:=/robot_'+str(i)+' -p use_sim_time:=True'+' -p initial_pos:=\"'+iposes.replace(" ","")+'\"\'')
         else:
             now = datetime.datetime.now()
             dateString = now.strftime("%Y-%m-%d-%H:%M")
-            cmd = ('bash -c \'ros2 run patrolling_sim_ros2 '+ALG+' __name:=patrol_robot_'+str(i)+' '+MAP+' '+str(i)+' --ros-args -p goal_reached_wait:='+str(float(GWAIT))+ ' -p communication_delay:='+str(COMMDELAY) + ' -p initial_pos:=\"'+iposes.replace(" ","")+'\" -r __ns:=/robot_'+str(i)+'\'')
+            cmd = ('bash -c \'ros2 run patrolling_sim_ros2 '+ALG+' __name:=patrol_robot_'+str(i)+' '+MAP+' '+str(i)+' --ros-args -p goal_reached_wait:='+str(float(GWAIT))+ ' -p communication_delay:='+str(COMMDELAY) +' -p use_sim_time:=True' + ' -p initial_pos:=\"'+iposes.replace(" ","")+'\" -r __ns:=/robot_'+str(i)+'\'')
         print(cmd)
         if (TERM == 'xterm'):
 	        os.system('xterm -e  "'+cmd+'" &')
