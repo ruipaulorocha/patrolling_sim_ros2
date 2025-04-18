@@ -33,5 +33,6 @@ define crobot position(
 
     # Some more realistic localization error
     localization "odom"
-    odom_error [ 0.01 0.01 0.0 0.1 ]
+    #odom_error [ 0.01 0.01 0.0 0.1 ]
+    odom_error [ 0.0 0.0 0.0 0.0 ]
 )
