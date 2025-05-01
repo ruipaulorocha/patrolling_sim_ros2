@@ -192,7 +192,8 @@
       width: 3
       height: 3
       resolution: 0.06
-      robot_radius: 0.175
+      #robot_radius: 0.175
+      footprint: "[[-0.1, -0.1], [-0.1, 0.1], [0.1, 0.1], [0.1, -0.1]]"  # A square footprint
       plugins: ["static_layer", "voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
@@ -234,7 +235,8 @@
       global_frame: map
       robot_base_frame: <robot_namespace>/base_link
       map_topic: /map
-      robot_radius: 0.175
+      #robot_radius: 0.175
+      footprint: "[[-0.1, -0.1], [-0.1, 0.1], [0.1, 0.1], [0.1, -0.1]]"  # A square footprint
       resolution: 0.06
       track_unknown_space: true
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
